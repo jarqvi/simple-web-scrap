@@ -17,13 +17,11 @@ const cheerio = require('cheerio');
 //     }
 // ];
 
-(async function run() {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+async function scrap(page) {
     await page.goto('https://rahavard365.com/stock');
     const html = await page.content();
     const $ = cheerio.load(html);
-    const result = $('table > tbody > tr').map((i, e) => {
+    const list = $('table > tbody > tr').map((i, e) => {
         const titleElement = $(e).find('.symbol');
         const title = $(titleElement).text();
         const url = 'https://rahavard365.com' + $(titleElement).attr('href');
@@ -35,6 +33,35 @@ const cheerio = require('cheerio');
         const price = $(priceElement).attr('data-order');
         return {title, url, date, percent, price};
     }).get();
-    console.log(result);
-    console.log(result);
-}())
+    return list;
+}
+async function sleep(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+async function scrapOtherItem(page, scrapeList) {
+    for (let i = 0; i < scrapeList.length; i++) {
+        await page.goto(scrapeList[i].url);
+        const html = await page.content();
+        const $ = cheerio.load(html);
+        const stratrgy = $('#main-gauge-text').text();  
+        const buyer = $('.personbuyercount').text();
+        const seller = $('.personsellercount').text();
+        const volumeBuy = $('.personbuyvolume').attr('title'); 
+        const volumeSell = $('.personsellvolume').attr('title');
+        scrapeList[i].stratrgy = stratrgy;
+        scrapeList[i].buyer = buyer;
+        scrapeList[i].seller = seller;
+        scrapeList[i].volumeBuy = volumeBuy;
+        scrapeList[i].volumeSell = volumeSell;
+        console.log(scrapeList[i]);
+        sleep(1500);
+    }
+}
+async function main() {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    const scrapeList = await scrap(page);
+    const scrapeListWithOtheItem = await scrapOtherItem(page, scrapeList);
+    console.log(scrapeList);
+}
+main();

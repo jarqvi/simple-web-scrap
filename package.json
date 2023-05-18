@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/jarqvi/simple-web-scrap#readme",
   "dependencies": {
-    "puppeteer": "^20.2.1"
+    "cheerio": "^1.0.0-rc.12",
+    "puppeteer": "^20.2.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
   }
 }

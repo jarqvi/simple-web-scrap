@@ -1,0 +1,25 @@
+{
+  "name": "simple-web-scrap",
+  "version": "1.0.0",
+  "description": "This is a simple web scraping project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jarqvi/simple-web-scrap.git"
+  },
+  "keywords": [
+    "js"
+  ],
+  "author": "MohammadHasan Akbari",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jarqvi/simple-web-scrap/issues"
+  },
+  "homepage": "https://github.com/jarqvi/simple-web-scrap#readme",
+  "dependencies": {
+    "puppeteer": "^20.2.1"
+  }
+}

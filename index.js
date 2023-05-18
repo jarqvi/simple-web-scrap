@@ -31,7 +31,10 @@ const cheerio = require('cheerio');
         const date = new Date($(dateElement).attr('data-order'));
         const percentElement = $(e).find('[data-type="real-close-price-change-percent-data"]');
         const percent = $(percentElement).attr('data-order');
-        return {title, url, date, percent};
+        const priceElement = $(e).find('[data-type="real-close-price-data"]');
+        const price = $(priceElement).attr('data-order');
+        return {title, url, date, percent, price};
     }).get();
+    console.log(result);
     console.log(result);
 }())

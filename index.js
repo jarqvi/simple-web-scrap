@@ -17,6 +17,17 @@ const cheerio = require('cheerio');
 //     }
 // ];
 
+function toEnglish(persianNumber) {
+    const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g, /،/g, /٬/g];
+    const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '', '.'];
+  
+    let englishNumber = persianNumber;
+    for (let i = 0; i < persianDigits.length; i++) {
+      englishNumber = englishNumber.replace(persianDigits[i], englishDigits[i]);
+    }
+  
+    return englishNumber;
+  }
 async function scrap(page) {
     await page.goto('https://rahavard365.com/stock');
     const html = await page.content();
@@ -44,10 +55,10 @@ async function scrapOtherItem(page, scrapeList) {
         const html = await page.content();
         const $ = cheerio.load(html);
         const stratrgy = $('#main-gauge-text').text();  
-        const buyer = $('.personbuyercount').text();
-        const seller = $('.personsellercount').text();
-        const volumeBuy = $('.personbuyvolume').attr('title'); 
-        const volumeSell = $('.personsellvolume').attr('title');
+        const buyer = toEnglish($('.personbuyercount').text());
+        const seller = toEnglish($('.personsellercount').text());
+        const volumeBuy = toEnglish($('.personbuyvolume').attr('title')); 
+        const volumeSell = toEnglish($('.personsellvolume').attr('title'));
         scrapeList[i].stratrgy = stratrgy;
         scrapeList[i].buyer = buyer;
         scrapeList[i].seller = seller;

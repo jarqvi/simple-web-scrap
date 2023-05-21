@@ -1,14 +1,14 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
-const ScrapeModel = require('./model');
+const scrapModel = require('./model');
 const schedule = require('node-schedule');
 const objToCsv = require('objects-to-csv');
 const path = require('path');
 
 async function connectDB() {
     try {
-        await mongoose.connect('mongodb://localhost:27017/scrape-db')
+        await mongoose.connect('mongodb://localhost:27017/scrap-db')
         console.log('Connected to DB.');
     } catch (err) {
         console.error(err);
@@ -52,11 +52,11 @@ async function sleep(time) {
         console.error(err);
     }
 }
-async function scrapOtherItem(page, scrapeList) {
+async function scrapOtherItem(page, scrapList) {
     try {
         let result = [];
-        for (let i = 0; i < scrapeList.length; i++) {
-            await page.goto(scrapeList[i].url);
+        for (let i = 0; i < scrapList.length; i++) {
+            await page.goto(scrapList[i].url);
             const html = await page.content();
             const $ = cheerio.load(html);
             const stratrgy = $('#main-gauge-text').text();  
@@ -64,15 +64,15 @@ async function scrapOtherItem(page, scrapeList) {
             const seller = toEnglish($('.personsellercount').text());
             const volumeBuy = toEnglish($('.personbuyvolume').attr('title')); 
             const volumeSell = toEnglish($('.personsellvolume').attr('title'));
-            scrapeList[i].stratrgy = stratrgy;
-            scrapeList[i].buyer = buyer;
-            scrapeList[i].seller = seller;
-            scrapeList[i].volumeBuy = volumeBuy;
-            scrapeList[i].volumeSell = volumeSell;
-            result.push(scrapeList[i]);
+            scrapList[i].stratrgy = stratrgy;
+            scrapList[i].buyer = buyer;
+            scrapList[i].seller = seller;
+            scrapList[i].volumeBuy = volumeBuy;
+            scrapList[i].volumeSell = volumeSell;
+            result.push(scrapList[i]);
             sleep(1500);
         }
-        console.log('Scrape finished.');
+        console.log('scrap finished.');
         return result;
     } catch (err) {
         console.error(err);
@@ -81,7 +81,7 @@ async function scrapOtherItem(page, scrapeList) {
 async function CreateCsvFile(data) {
     try {
         let csv = new objToCsv(data);
-        await csv.toDisk(path.join(__dirname, 'scrape.csv'));
+        await csv.toDisk(path.join(__dirname, 'scrap.csv'));
     } catch (err) {
         console.error(err);
     }
@@ -91,10 +91,10 @@ async function main() {
         await connectDB();
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
-        const scrapeList = await scrap(page);
-        const scrapeListWithOtheItem = await scrapOtherItem(page, scrapeList);
-        await CreateCsvFile(scrapeListWithOtheItem);
-        await ScrapeModel.insertMany(scrapeListWithOtheItem);
+        const scrapList = await scrap(page);
+        const scrapListWithOtheItem = await scrapOtherItem(page, scrapList);
+        await CreateCsvFile(scrapListWithOtheItem);
+        await scrapModel.insertMany(scrapListWithOtheItem);
     } catch (err) {
         console.error(err);
     }

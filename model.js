@@ -16,7 +16,7 @@ const mongoose = require('mongoose');
 //     }
 // ];
 
-const ScrapeModel = mongoose.model('Scrape', mongoose.Schema({
+const scrapModel = mongoose.model('scrap', mongoose.Schema({
     title: String,
     data: Date,
     url: String,
@@ -29,4 +29,4 @@ const ScrapeModel = mongoose.model('Scrape', mongoose.Schema({
     volumeSell: String,
 }));
 
-module.exports = ScrapeModel;
+module.exports = scrapModel;
